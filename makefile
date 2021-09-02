@@ -57,7 +57,7 @@ CWARNSC= -Wdeclaration-after-statement \
 # ('-ftrapv' for runtime checks of integer overflows)
 # -fsanitize=undefined -ftrapv -fno-inline
 # Note: Disable -DNDEBUG
-# TESTS= -DLUA_USER_H='"ltests.h"' -O0 -g
+TESTS= -DLUA_USER_H='"ltests.h"' -O0 -g
 
 # Your platform. See PLATS for possible values.
 PLAT= guess
@@ -183,6 +183,16 @@ help:
 guess:
 	@echo Guessing `$(UNAME)`
 	@$(MAKE) `$(UNAME)`
+
+shuffled:
+	@echo Building Base Lua
+	$(MAKE) clean
+	$(MAKE) OPCODE="shuffle/base/" linux-readline
+	@echo Shuffling opcode set
+	./lua shuffle/sort.lua --output=shuffle/shuffled/ --seed=${RANDOM}
+	@echo Building Shuffled Lua
+	$(MAKE) clean
+	$(MAKE) OPCODE="shuffle/shuffled/" linux-readline
 
 AIX aix:
 	$(MAKE) $(ALL) CC="xlc" CFLAGS="-O2 -DLUA_USE_POSIX -DLUA_USE_DLOPEN" SYSLIBS="-ldl" SYSLDFLAGS="-brtl -bexpall"
